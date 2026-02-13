@@ -2,5 +2,16 @@
 name = "server"
 version = "0.1.0"
 edition = "2024"
+license = "GPL-3.0-or-later"
+authors = ["Luca Giorgino"]
 
 [dependencies]
+anyhow = "1.0.101"
+axum = "0.8.8"
+chrono = "0.4.43"
+clap = { version = "4.5.57", features = ["derive", "env"] }
+dotenv = "0.15.0"
+env_logger = "0.11.9"
+serde = "1.0.228"
+sqlx = { version = "0.8.6", features = [ "derive", "migrate", "postgres", "runtime-tokio", "tls-native-tls" ] }
+tokio = { version = "1.49.0", features = ["full"] }
