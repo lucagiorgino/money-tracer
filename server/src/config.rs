@@ -6,7 +6,7 @@
 /// For local development, the application can also load configuration from a `.env` 
 /// file in the current working directory. Refer to `.env.sample` in the repository 
 /// root for a template
-#[derive(clap::Parser)]
+#[derive(clap::Parser, Debug)]
 pub struct Config {
     /// The connection URL for the Postgres database
     #[clap(long, env)]
@@ -14,5 +14,13 @@ pub struct Config {
 
     /// Number of the max connection for the Postgres database
     #[clap(long, env)]
-    pub database_max_connections: u32
+    pub database_max_connections: u32,
+
+    /// The host address for the web server to bind to
+    #[clap(long, env)]
+    pub server_host: String,
+
+    /// The port number for the web server to listen on
+    #[clap(long, env)]
+    pub server_port: u16
 }

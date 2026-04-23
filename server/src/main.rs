@@ -2,6 +2,7 @@ use anyhow::Context;
 use clap::Parser;
 use server::config::Config;
 use sqlx::postgres::PgPoolOptions;
+use server::routers;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
@@ -16,14 +17,26 @@ async fn main() -> anyhow::Result<()> {
     // This will exit with a help message if something is wrong
     let config = Config::parse();
 
-    // Create a connection pool, set the maximum number of connections
-    let _pool = PgPoolOptions::new()
+    log::info!("Starting server with configuration: {:?}", config);
+
+    // Create a connection pool shared across the whole application
+    // set the maximum number of connections
+    let db  = PgPoolOptions::new()
     .max_connections(config.database_max_connections)
     .connect(&config.database_url)
     .await
     .context("Could not connect to DATABASE_URL")?;
 
+    log::info!("Successfully connected to the database");
 
+
+    // This embeds database migrations in the application binary so we can ensure the database
+    // is migrated correctly on startup
+    sqlx::migrate!().run(&db).await?;
+
+    // Start web server
+    log::info!("Starting web server on {}:{}", config.server_host, config.server_port);
+    routers::serve(config, db).await?;
 
     Ok(())
 }

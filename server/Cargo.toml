@@ -8,10 +8,13 @@ authors = ["Luca Giorgino"]
 [dependencies]
 anyhow = "1.0.101"
 axum = "0.8.8"
-chrono = "0.4.43"
+chrono = { version = "0.4.43", features = ["serde"] }
 clap = { version = "4.5.57", features = ["derive", "env"] }
 dotenv = "0.15.0"
 env_logger = "0.11.9"
+log = "0.4.29"
+rust_decimal = "1.40.0"
 serde = "1.0.228"
 sqlx = { version = "0.8.6", features = [ "derive", "migrate", "postgres", "runtime-tokio", "tls-native-tls" ] }
 tokio = { version = "1.49.0", features = ["full"] }
+uuid = { version = "1.21.0", features = ["v7", "serde"] }
