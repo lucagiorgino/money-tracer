@@ -1,5 +1,5 @@
 -- Enums are more efficient than strings for fixed options
-create type transaction_type as enum ('income', 'expense', 'transfer');
+create type transaction_type as enum ('income', 'expense', 'transfer', 'correction');
 create type reoccurrence_type as enum ('none', 'daily', 'weekly', 'monthly', 'yearly');
 
 create table transactions
