@@ -26,4 +26,3 @@ pub async fn serve(config: Config, db: PgPool) -> anyhow::Result<()> {
     .context("Error running axum server")
 
 }
-

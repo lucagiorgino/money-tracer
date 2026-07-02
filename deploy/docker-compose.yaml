@@ -10,6 +10,7 @@ services:
       KEYCLOAK_ADMIN_PASSWORD: admin
       KC_BOOTSTRAP_ADMIN_USERNAME: admin
       KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+      # todo use postgres database
       KC_DB: dev-mem
       KC_HOSTNAME: localhost
       KEYCLOAK_BASE_URL: "http://localhost/auth" # update

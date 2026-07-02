@@ -1,0 +1,71 @@
+erDiagram
+
+    users {
+        uuid user_id PK
+        text keycloak_id "unique not null"
+        timestamptz created_at "not null default now()"
+        timestamptz updated_at
+    }
+
+    wallets {
+        uuid wallet_id PK
+        uuid owner_id FK "not null → users.user_id"
+        text name "not null (case_insensitive)"
+        integer sort_order "not null default 0"
+        varchar_7 colour "not null default #7f8c8d"
+        text icon
+        numeric_19_4 initial_amount "not null default 0.0000"
+        timestamptz created_at "not null default now()"
+        timestamptz updated_at
+    }
+
+    categories {
+        uuid category_id PK
+        text name "not null (case_insensitive)"
+        varchar_7 colour "not null default #7f8c8d"
+        text icon
+        boolean built_in "not null default false"
+        boolean is_main "not null"
+        uuid owner_id FK "not null → users.user_id"
+        uuid parent_id FK "→ categories.category_id (on delete cascade)"
+        timestamptz created_at "not null default now()"
+        timestamptz updated_at
+    }
+
+    transactions {
+        uuid transaction_id PK
+        uuid user_id FK "not null → users.user_id"
+        text description "(case_insensitive)"
+        numeric_19_4 amount "not null, ≠ 0"
+        timestamptz date "not null default now()"
+        transaction_type type "not null (income|expense|transfer)"
+        reoccurrence_type reoccurrence "not null default none"
+        uuid transfer_key "links paired transfer rows"
+        uuid wallet_id FK "not null → wallets.wallet_id"
+        uuid to_wallet_id FK "→ wallets.wallet_id (transfer only)"
+        uuid main_category_id FK "not null → categories.category_id"
+        uuid sub_category_id FK "→ categories.category_id"
+        timestamptz created_at "not null default now()"
+        timestamptz updated_at
+    }
+
+    %% ── Relationships ──────────────────────────────────────────
+
+    users ||--o{ wallets        : "owns (owner_id)"
+    users ||--o{ categories     : "owns (owner_id)"
+    users ||--o{ transactions   : "owns (user_id)"
+
+    %% Self-referencing: a main category can have many sub-categories
+    categories ||--o{ categories : "parent_id (sub-categories)"
+
+    %% A wallet is the source of many transactions
+    wallets ||--o{ transactions : "source (wallet_id)"
+
+    %% A wallet can also be the destination in transfer transactions
+    wallets ||--o{ transactions : "destination (to_wallet_id)"
+
+    %% A main category classifies many transactions
+    categories ||--o{ transactions : "main_category_id"
+
+    %% A sub-category (optional) refines many transactions
+    categories ||--o{ transactions : "sub_category_id"

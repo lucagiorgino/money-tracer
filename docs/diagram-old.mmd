@@ -1,0 +1,79 @@
+erDiagram
+    USER ||--o{ WALLET : "owns"
+    USER ||--o{ CATEGORY : "creates"
+    USER ||--o{ USER_WALLET_PERMISSION : "has_wallet_access"
+    USER ||--o{ USER_CATEGORY_PERMISSION : "has_category_access"
+    
+    WALLET ||--o{ USER_WALLET_PERMISSION : "shared_with"
+    WALLET ||--o{ TRANSACTION : "contains"
+    
+    CATEGORY ||--o{ CATEGORY : "subcategory_of"
+    CATEGORY ||--o{ USER_CATEGORY_PERMISSION : "shared_with"
+    
+    TRANSACTION }o--|| WALLET : "recorded_in"
+    TRANSACTION }o--|| CATEGORY : "belongs_to_main_category"
+    TRANSACTION }o--o| CATEGORY : "belongs_to_subcategory"
+    TRANSACTION }o--|| USER : "created_by"
+    
+
+    USER {
+        string keycloak_id PK "Keycloak sub claim - ONLY reference"
+    }
+    
+    WALLET {
+        string id PK
+        string name
+        int order
+        string colour
+        string icon
+        real initial_amount
+        string owner_id FK "USER.keycloak_id"
+        boolean is_shared
+        datetime created_at
+        datetime updated_at
+    }
+    
+    CATEGORY {
+        string id PK
+        string name
+        string colour
+        string icon
+        string owner_id FK "USER.keycloak_id"
+        boolean is_shared
+        boolean is_system "predefined categories"
+        datetime created_at
+        datetime updated_at
+    }
+    
+    TRANSACTION {
+        string id PK
+        string description
+        float amount
+        enum type "income|expense|transfer"
+        datetime date
+        enum reoccurrence "none|daily|weekly|monthly|yearly"
+        string wallet_id FK
+        string main_category_id FK
+        string sub_category_id FK
+        string created_by_id FK "USER.keycloak_id"
+        datetime created_at
+        datetime updated_at
+    }
+    
+    USER_WALLET_PERMISSION {
+        string id PK
+        string user_id FK "Keycloak ID"
+        string wallet_id FK
+        enum permission_level "view|edit|admin"
+        datetime granted_at
+        string granted_by_id FK "Keycloak ID"
+    }
+    
+    USER_CATEGORY_PERMISSION {
+        string id PK
+        string user_id FK "Keycloak ID"
+        string category_id FK
+        enum permission_level "view|edit"
+        datetime granted_at
+        string granted_by_id FK "Keycloak ID"
+    }
